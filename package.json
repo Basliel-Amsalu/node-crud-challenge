@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "mocha tests/index.js"
   },
   "repository": {
@@ -26,6 +27,7 @@
     "express": "^4.18.1",
     "joi": "^17.6.0",
     "mocha": "^10.0.0",
+    "nodemon": "^3.1.0",
     "uuid": "^8.3.2"
   }
 }

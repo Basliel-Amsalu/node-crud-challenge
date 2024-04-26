@@ -6,4 +6,4 @@ const personSchema = Joi.object({
   hobbies: Joi.array().items(Joi.string()).required(),
 });
 
-module.exports = { personSchema };
+module.exports = personSchema;

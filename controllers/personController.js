@@ -6,18 +6,38 @@ exports.createPerson = (req, res) => {
   try {
     const { error } = personSchema.validate(req.body);
     if (error) {
-      throw new Error(error.details[0].message);
+      const validationError = new Error(error.details[0].message);
+      validationError.status = 400;
+      throw validationError;
     } else {
       const id = uuid.v4();
       const newPerson = { id, ...req.body };
       persons.push(newPerson);
-      res.status(201).json({
+      res.status(200).json({
         message: "successfully created",
       });
     }
-  } catch {
+  } catch (err) {
+    const status = err.status || 500;
     res
-      .status(500)
-      .json({ error: "An error occurred while creating the person" });
+      .status(status)
+      .json({ error: err.message || "error while creating a person" });
+  }
+};
+
+exports.getAllPersons = (req, res) => {
+  try {
+    if (persons.length === 0) {
+      const notFoundError = new Error("No persons found");
+      notFoundError.status = 404;
+      throw notFoundError;
+    } else {
+      res.status(200).json(persons);
+    }
+  } catch {
+    const status = err.status || 500;
+    res
+      .status(status)
+      .json({ error: err.message || "error while getting all persons" });
   }
 };
