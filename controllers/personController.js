@@ -41,3 +41,21 @@ exports.getAllPersons = (req, res) => {
       .json({ error: err.message || "error while getting all persons" });
   }
 };
+
+exports.getPersonById = (req, res) => {
+  try {
+    let person = persons.find((person) => person.id == req.params.id);
+    if (!person) {
+      const notFoundError = new Error("Person not found");
+      notFoundError.status = 404;
+      throw notFoundError;
+    } else {
+      res.status(200).json(person);
+    }
+  } catch (err) {
+    const status = err.status || 500;
+    res
+      .status(status)
+      .json({ error: err.message || "error while getting person" });
+  }
+};
