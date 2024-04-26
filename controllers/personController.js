@@ -1,14 +1,16 @@
 const uuid = require("uuid");
 const personSchema = require("../models/personModel");
 const persons = require("../db/db");
+const {
+  handleValidationError,
+  handleNotFoundError,
+} = require("../utils/errorHandler");
 
 exports.createPerson = (req, res) => {
   try {
     const { error } = personSchema.validate(req.body);
     if (error) {
-      const validationError = new Error(error.details[0].message);
-      validationError.status = 400;
-      throw validationError;
+      handleValidationError(error.details[0].message);
     } else {
       const id = uuid.v4();
       const newPerson = { id, ...req.body };
@@ -28,9 +30,7 @@ exports.createPerson = (req, res) => {
 exports.getAllPersons = (req, res) => {
   try {
     if (persons.length === 0) {
-      const notFoundError = new Error("No persons found");
-      notFoundError.status = 404;
-      throw notFoundError;
+      handleNotFoundError("No persons found");
     } else {
       res.status(200).json(persons);
     }
@@ -46,9 +46,7 @@ exports.getPersonById = (req, res) => {
   try {
     let person = persons.find((person) => person.id == req.params.id);
     if (!person) {
-      const notFoundError = new Error("Person not found");
-      notFoundError.status = 404;
-      throw notFoundError;
+      handleNotFoundError("Person not found");
     } else {
       res.status(200).json(person);
     }
@@ -68,9 +66,7 @@ exports.updatePerson = (req, res) => {
     if (personIndex >= 0) {
       const { error } = personSchema.validate(req.body);
       if (error) {
-        const validationError = new Error(error.details[0].message);
-        validationError.status = 400;
-        throw validationError;
+        handleValidationError(error.details[0].message);
       } else {
         const updatePerson = { ...req.body };
         updatePerson.id = persons[personIndex].id;
@@ -80,9 +76,7 @@ exports.updatePerson = (req, res) => {
         });
       }
     } else {
-      const notFoundError = new Error("Person not found");
-      notFoundError.status = 404;
-      throw notFoundError;
+      handleNotFoundError("Person not found");
     }
   } catch {
     const status = err.status || 500;
@@ -101,9 +95,7 @@ exports.deletePerson = (req, res) => {
         message: "Successfully deleted",
       });
     } else {
-      const notFoundError = new Error("Person not found");
-      notFoundError.status = 404;
-      throw notFoundError;
+      handleNotFoundError("Person not found");
     }
   } catch {
     const status = err.status || 500;
