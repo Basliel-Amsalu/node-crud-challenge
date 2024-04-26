@@ -88,7 +88,9 @@ exports.updatePerson = (req, res) => {
 
 exports.deletePerson = (req, res) => {
   try {
-    let personIndex = persons.findIndex((p) => p.id === req.params.id);
+    let personIndex = persons.findIndex(
+      (person) => person.id === req.params.id
+    );
     if (personIndex >= 0) {
       persons.splice(personIndex, 1);
       res.status(200).json({
